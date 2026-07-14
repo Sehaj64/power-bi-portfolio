@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Power BI Dashboard Preview - Career Portfolio</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet.js Mapping CDN -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Custom Style Sheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">BI</div>
+            <div class="sidebar-title">StatusNeo Case</div>
+        </div>
+        <ul class="sidebar-menu">
+            <li class="menu-item active" data-tab="executive-summary">🏠 Executive Summary</li>
+            <li class="menu-item" data-tab="sales-trends">📈 Sales & Trends</li>
+            <li class="menu-item" data-tab="customer-segments">👥 Customer Segments</li>
+            <li class="menu-item" data-tab="regional-mapping">🗺️ Regional Mapping</li>
+            <li class="menu-item" data-tab="business-recommendations">💡 Recommendations</li>
+        </ul>
+        <div class="sidebar-footer">
+            Job Candidate Portfolio
+        </div>
+    </div>
+
+    <!-- Main Workspace -->
+    <div class="main-content">
+        <!-- Top Header & Slicers -->
+        <div class="header-bar">
+            <div class="header-title">
+                <h1>Superstore Business Analytics Report</h1>
+                <p>Interactive web simulation of my Power BI portfolio project</p>
+            </div>
+            <div class="controls">
+                <select id="year-select" class="select-control">
+                    <option value="All">Year: All Years</option>
+                    <option value="2014">2014</option>
+                    <option value="2015">2015</option>
+                    <option value="2016">2016</option>
+                    <option value="2017">2017</option>
+                </select>
+                <select id="category-select" class="select-control">
+                    <option value="All">Category: All Categories</option>
+                    <option value="Furniture">Furniture</option>
+                    <option value="Office Supplies">Office Supplies</option>
+                    <option value="Technology">Technology</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- KPI Scorecards -->
+        <div class="kpi-row">
+            <div class="kpi-card sales">
+                <div class="kpi-label">Total Revenue</div>
+                <div id="sales-kpi" class="kpi-value">$0.00</div>
+                <div class="kpi-sub">Sum of order transactions</div>
+            </div>
+            <div class="kpi-card profit">
+                <div class="kpi-label">Net Profit</div>
+                <div id="profit-kpi" class="kpi-value">$0.00</div>
+                <div class="kpi-sub">Total sales minus expenditures</div>
+            </div>
+            <div class="kpi-card margin">
+                <div class="kpi-label">Profit Margin</div>
+                <div id="margin-kpi" class="kpi-value">0.00%</div>
+                <div class="kpi-sub">Profit margin efficiency ratio</div>
+            </div>
+            <div class="kpi-card orders">
+                <div class="kpi-label">Orders Count</div>
+                <div id="orders-kpi" class="kpi-value">0</div>
+                <div class="kpi-sub">Unique customer checkout count</div>
+            </div>
+        </div>
+
+        <!-- Tab 1: Executive Summary -->
+        <div id="executive-summary" class="tab-content active">
+            <div class="visuals-grid">
+                <div class="visual-card">
+                    <div class="visual-title">Monthly Revenue & Net Profit Trend</div>
+                    <div style="height: 320px; position: relative;">
+                        <canvas id="trendChart"></canvas>
+                    </div>
+                </div>
+                <div class="visual-card">
+                    <div class="visual-title">Sales by Segment & Category (Matrix)</div>
+                    <table class="matrix-table">
+                        <thead>
+                            <tr>
+                                <th>Category</th>
+                                <th>Consumer</th>
+                                <th>Corporate</th>
+                                <th>Home Office</th>
+                            </tr>
+                        </thead>
+                        <tbody id="matrix-body">
+                            <!-- Populated dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: Sales Trends -->
+        <div id="sales-trends" class="tab-content">
+            <div class="visual-card" style="margin-bottom: 25px;">
+                <div class="visual-title">Sub-Category Profitability Analysis (Highlighting Loss-makers)</div>
+                <div style="height: 400px; position: relative;">
+                    <canvas id="subcatChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 3: Customer Segments -->
+        <div id="customer-segments" class="tab-content">
+            <div class="visual-card">
+                <div class="visual-title">Customer Distribution & Loyalty Insights</div>
+                <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6; margin-bottom: 15px;">
+                    Our database segments customers into three core classes: <strong>Consumer</strong> (representing ~51% of volume), <strong>Corporate</strong> (representing ~30%), and <strong>Home Office</strong> (representing ~19%).
+                </p>
+                <p style="color: var(--text-secondary); font-size: 14px; line-height: 1.6;">
+                    The senior consumer demographic contributes the highest revenue share, but corporate tech orders carry the highest profit margins. Use the category filters at the top to slice and inspect segment dependencies.
+                </p>
+            </div>
+        </div>
+
+        <!-- Tab 4: Regional Mapping -->
+        <div id="regional-mapping" class="tab-content">
+            <div class="visual-card">
+                <div class="visual-title">Geographic Profitability Map (Interactive Markers)</div>
+                <div id="map"></div>
+                <p style="color: var(--text-secondary); font-size: 12px; margin-top: 10px;">
+                    *Green circles represent positive net profits; red circles represent geographic areas running at a loss. Hover/click markers to inspect sales.
+                </p>
+            </div>
+        </div>
+
+        <!-- Tab 5: Recommendations -->
+        <div id="business-recommendations" class="tab-content">
+            <div class="recommendations-box">
+                <div class="rec-card loss">
+                    <div class="rec-title">🚨 Stop the Profit Leakage on Tables</div>
+                    <div class="rec-description">
+                        Our analysis indicates that while the **Furniture** category generates strong sales volumes, the **Tables** sub-category is heavily unprofitable. This is caused by excessive discount margins in states like Texas and Illinois (regularly exceeding 40%). We recommend capping standard table discounts to a maximum of 15%.
+                    </div>
+                </div>
+                <div class="rec-card">
+                    <div class="rec-title">🚀 Shift Marketing Focus to Corporate Tech</div>
+                    <div class="rec-description">
+                        **Technology** products (specifically Phones and Copiers) represent the highest net margins in our catalog. Marketing budgets should be dynamically shifted to target corporate segment buyers in high-profitability hubs like New York and California.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Data & Script files -->
+    <script src="dashboard_data.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
