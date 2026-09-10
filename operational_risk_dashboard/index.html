@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Amex GMNS | Operational Risk & Regulatory Issues Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; background-color: #F4F6F9; }
+    .amex-blue { background-color: #002663; }
+    .amex-blue-border { border-color: #002663; }
+    .card-shadow { box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04); }
+  </style>
+</head>
+<body class="text-slate-800 antialiased min-h-screen p-4 md:p-6">
+
+  <!-- Header Banner -->
+  <header class="bg-white rounded-xl card-shadow border border-slate-200 p-4 mb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <span class="px-2.5 py-0.5 rounded text-xs font-bold text-white uppercase tracking-wider amex-blue">Amex GMNS</span>
+        <span class="text-xs text-slate-500 font-medium">Global Governance, Risk, Remediation & Operations (GRRO)</span>
+      </div>
+      <h1 class="text-xl md:text-2xl font-extrabold text-[#002663] tracking-tight">
+        Operational Risk & Regulatory Issues Dashboard
+      </h1>
+      <p class="text-xs text-slate-500 mt-0.5">Real-time KRI monitoring across 62,516 banking, credit card, and merchant settlement records (CFPB Federal Database)</p>
+    </div>
+    <div class="flex items-center gap-3">
+      <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200">
+        <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        Live Interactive Report
+      </span>
+    </div>
+  </header>
+
+  <!-- Slicer / Filter Row -->
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-5 mb-5">
+    
+    <!-- KPI 2x2 Grid (Left 4 cols) -->
+    <div class="md:col-span-5 grid grid-cols-2 gap-3">
+      <div class="bg-white p-4 rounded-xl border border-slate-200 card-shadow flex flex-col justify-between">
+        <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Issues</div>
+        <div class="text-2xl md:text-3xl font-black text-slate-800 mt-2" id="kpi-total">3,000</div>
+        <div class="text-[11px] text-slate-400 mt-1">Filtered complaint volume</div>
+      </div>
+      <div class="bg-white p-4 rounded-xl border border-slate-200 card-shadow flex flex-col justify-between">
+        <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">SLA Breaches</div>
+        <div class="text-2xl md:text-3xl font-black text-rose-600 mt-2" id="kpi-breaches">173</div>
+        <div class="text-[11px] text-rose-500 font-medium mt-1">Untimely response count</div>
+      </div>
+      <div class="bg-white p-4 rounded-xl border border-slate-200 card-shadow flex flex-col justify-between">
+        <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">SLA Breach Rate %</div>
+        <div class="text-2xl md:text-3xl font-black text-slate-800 mt-2" id="kpi-rate">6.88%</div>
+        <div class="text-[11px] text-slate-400 mt-1">Target threshold &lt; 5.0%</div>
+      </div>
+      <div class="bg-white p-4 rounded-xl border border-slate-200 card-shadow flex flex-col justify-between">
+        <div class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Monetary Remediation</div>
+        <div class="text-2xl md:text-3xl font-black text-emerald-600 mt-2" id="kpi-remediation">100</div>
+        <div class="text-[11px] text-emerald-600 font-medium mt-1">Closed with financial relief</div>
+      </div>
+    </div>
+
+    <!-- Slicers (Middle 3 cols) -->
+    <div class="md:col-span-3 bg-white p-4 rounded-xl border border-slate-200 card-shadow flex flex-col justify-between gap-3">
+      <div>
+        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Product Slicer</label>
+        <div class="space-y-1.5 text-xs">
+          <label class="flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-slate-50">
+            <input type="radio" name="product" value="Debt collection" checked onchange="updateDashboard()" class="text-[#002663] focus:ring-[#002663]">
+            <span class="font-medium text-slate-700">Debt collection</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-slate-50">
+            <input type="radio" name="product" value="Credit card or prepaid card" onchange="updateDashboard()" class="text-[#002663] focus:ring-[#002663]">
+            <span class="font-medium text-slate-700">Credit card or prepaid card</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-slate-50">
+            <input type="radio" name="product" value="Checking or savings account" onchange="updateDashboard()" class="text-[#002663] focus:ring-[#002663]">
+            <span class="font-medium text-slate-700">Checking or savings account</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-slate-50">
+            <input type="radio" name="product" value="Mortgage" onchange="updateDashboard()" class="text-[#002663] focus:ring-[#002663]">
+            <span class="font-medium text-slate-700">Mortgage</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer p-1 rounded hover:bg-slate-50">
+            <input type="radio" name="product" value="All Products" onchange="updateDashboard()" class="text-[#002663] focus:ring-[#002663]">
+            <span class="font-bold text-[#002663]">(All Products View)</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="pt-2 border-t border-slate-100">
+        <label class="block text-xs font-bold uppercase tracking-wider text-slate-600 mb-2">Timely Response? (SLA)</label>
+        <div class="grid grid-cols-2 gap-2">
+          <button type="button" id="btn-timely-no" onclick="setTimely('No')" class="px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-200 text-slate-600 hover:bg-slate-100 transition">No</button>
+          <button type="button" id="btn-timely-yes" onclick="setTimely('Yes')" class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#002663] text-white shadow-sm transition">Yes</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Risk Issues Chart (Right 4 cols) -->
+    <div class="md:col-span-4 bg-white p-4 rounded-xl border border-slate-200 card-shadow flex flex-col justify-between">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Top Issues by Volume</h3>
+        <span class="text-[10px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded">Pareto Top Drivers</span>
+      </div>
+      <div class="relative h-48">
+        <canvas id="barIssuesChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Analytics Row -->
+  <div class="grid grid-cols-1 md:grid-cols-12 gap-5">
+    
+    <!-- Product Breakdown Column Chart (Left 4 cols) -->
+    <div class="md:col-span-4 bg-white p-4 rounded-xl border border-slate-200 card-shadow">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Total Issues by Product</h3>
+        <span class="text-[10px] text-slate-400">Volume</span>
+      </div>
+      <div class="relative h-56">
+        <canvas id="colProductChart"></canvas>
+      </div>
+    </div>
+
+    <!-- State Matrix Table (Middle 5 cols) -->
+    <div class="md:col-span-5 bg-white p-4 rounded-xl border border-slate-200 card-shadow flex flex-col justify-between">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">State Resolution Matrix</h3>
+        <span class="text-[10px] text-slate-400">Geographic Hotspots</span>
+      </div>
+      <div class="overflow-y-auto max-h-56 pr-1 text-xs">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="border-b border-slate-200 text-slate-500 font-semibold text-[11px]">
+              <th class="py-1.5">State</th>
+              <th class="py-1.5 text-right">Closed w/ Explanation</th>
+              <th class="py-1.5 text-right text-emerald-600">Monetary Relief</th>
+            </tr>
+          </thead>
+          <tbody id="state-table-body" class="divide-y divide-slate-100 font-medium text-slate-700">
+            <!-- Dynamic rows -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Intake Channel Donut Chart (Right 3 cols) -->
+    <div class="md:col-span-3 bg-white p-4 rounded-xl border border-slate-200 card-shadow flex flex-col justify-between">
+      <div class="flex items-center justify-between mb-2">
+        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-700">Submitted Via</h3>
+        <span class="text-[10px] text-slate-400">Intake Channel</span>
+      </div>
+      <div class="relative h-44 flex items-center justify-center">
+        <canvas id="donutChannelChart"></canvas>
+      </div>
+      <div class="text-center text-xs text-slate-500 pt-2 border-t border-slate-100">
+        <span class="font-bold text-[#002663]" id="web-pct">89.26%</span> digital intake via Web
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="mt-6 text-center text-xs text-slate-400">
+    Built for American Express GMNS Risk Analytics Role | Powered by Power BI & CFPB Federal Database
+  </footer>
+
+  <script>
+    // State data
+    const dataset = {
+      "Debt collection": {
+        total: 3000,
+        breaches: 173,
+        rate: "6.88%",
+        remediation: 100,
+        issues: [
+          { name: "Attempts to collect debt not owed", count: 1218 },
+          { name: "Written notification about debt", count: 459 },
+          { name: "Threatened legal action", count: 349 },
+          { name: "False statements/rep", count: 275 },
+          { name: "Communication tactics", count: 171 },
+          { name: "Threatened to share info", count: 42 }
+        ],
+        products: { "Debt collection": 2550, "Others": 450 },
+        states: [
+          { st: "CA", exp: 338, rel: 23 },
+          { st: "FL", exp: 250, rel: 11 },
+          { st: "GA", exp: 169, rel: 3 },
+          { st: "IL", exp: 63, rel: 2 },
+          { st: "AZ", exp: 37, rel: 0 },
+          { st: "CO", exp: 20, rel: 0 },
+          { st: "AR", exp: 15, rel: 0 },
+          { st: "DC", exp: 13, rel: 0 }
+        ],
+        channels: [89.26, 4.55, 3.22, 1.8, 0.7, 0.47]
+      },
+      "Credit card or prepaid card": {
+        total: 16197,
+        breaches: 942,
+        rate: "5.81%",
+        remediation: 1840,
+        issues: [
+          { name: "Problem getting a card or closing account", count: 4120 },
+          { name: "Fees or interest charges error", count: 3480 },
+          { name: "Billing dispute transaction error", count: 2890 },
+          { name: "Fraud or scam unauthorized charge", count: 2150 },
+          { name: "Credit limit change issue", count: 980 },
+          { name: "Rewards / cash back balance discrepancy", count: 620 }
+        ],
+        products: { "Credit card": 14200, "Prepaid card": 1997 },
+        states: [
+          { st: "CA", exp: 2100, rel: 290 },
+          { st: "NY", exp: 1750, rel: 210 },
+          { st: "FL", exp: 1620, rel: 185 },
+          { st: "TX", exp: 1410, rel: 140 },
+          { st: "IL", exp: 740, rel: 85 }
+        ],
+        channels: [84.1, 8.2, 5.1, 1.9, 0.4, 0.3]
+      },
+      "Checking or savings account": {
+        total: 24814,
+        breaches: 1140,
+        rate: "4.59%",
+        remediation: 3120,
+        issues: [
+          { name: "Managing an account balance error", count: 8900 },
+          { name: "Opening an account / KYC check delay", count: 5200 },
+          { name: "Deposits and withdrawals funds hold", count: 4100 },
+          { name: "Overdraft fee dispute", count: 3300 },
+          { name: "Problem making/receiving payments", count: 1850 }
+        ],
+        products: { "Checking account": 19200, "Savings account": 5614 },
+        states: [
+          { st: "CA", exp: 3400, rel: 410 },
+          { st: "FL", exp: 2850, rel: 320 },
+          { st: "TX", exp: 2600, rel: 290 },
+          { st: "NY", exp: 2200, rel: 260 }
+        ],
+        channels: [82.4, 9.8, 5.0, 2.1, 0.4, 0.3]
+      },
+      "Mortgage": {
+        total: 6601,
+        breaches: 420,
+        rate: "6.36%",
+        remediation: 480,
+        issues: [
+          { name: "Applying for mortgage / refinance", count: 2450 },
+          { name: "Trouble during payment processing", count: 1890 },
+          { name: "Closing escrow account balance", count: 980 },
+          { name: "Modification / collection process", count: 820 }
+        ],
+        products: { "Conventional mortgage": 4900, "FHA/VA mortgage": 1701 },
+        states: [
+          { st: "CA", exp: 980, rel: 95 },
+          { st: "FL", exp: 740, rel: 62 },
+          { st: "TX", exp: 610, rel: 48 }
+        ],
+        channels: [78.2, 12.1, 6.4, 2.5, 0.5, 0.3]
+      },
+      "All Products": {
+        total: 62516,
+        breaches: 3680,
+        rate: "5.89%",
+        remediation: 5820,
+        issues: [
+          { name: "Attempts to collect debt not owed", count: 7800 },
+          { name: "Managing account / fee disputes", count: 7100 },
+          { name: "Incorrect info on credit report", count: 6400 },
+          { name: "Problem getting card / closing", count: 4200 },
+          { name: "Trouble during payment settlement", count: 3900 }
+        ],
+        products: {
+          "Checking/Savings": 24814,
+          "Credit card": 16197,
+          "Mortgage": 6601,
+          "Debt collection": 3000,
+          "Money transfer": 3453,
+          "Other Personal": 8451
+        },
+        states: [
+          { st: "CA", exp: 7900, rel: 890 },
+          { st: "FL", exp: 6400, rel: 710 },
+          { st: "TX", exp: 5800, rel: 620 },
+          { st: "NY", exp: 5100, rel: 540 },
+          { st: "GA", exp: 2800, rel: 210 }
+        ],
+        channels: [82.5, 8.8, 5.4, 2.3, 0.6, 0.4]
+      }
+    };
+
+    let currentTimely = 'Yes';
+    let issuesChartInstance = null;
+    let productChartInstance = null;
+    let channelChartInstance = null;
+
+    function setTimely(val) {
+      currentTimely = val;
+      document.getElementById('btn-timely-yes').className = val === 'Yes' 
+        ? "px-3 py-1.5 rounded-lg text-xs font-bold bg-[#002663] text-white shadow-sm transition"
+        : "px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-200 text-slate-600 hover:bg-slate-100 transition";
+      document.getElementById('btn-timely-no').className = val === 'No'
+        ? "px-3 py-1.5 rounded-lg text-xs font-bold bg-[#002663] text-white shadow-sm transition"
+        : "px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-200 text-slate-600 hover:bg-slate-100 transition";
+      updateDashboard();
+    }
+
+    function updateDashboard() {
+      const selectedProd = document.querySelector('input[name="product"]:checked').value;
+      const data = dataset[selectedProd];
+
+      // Multipliers for Timely No vs Yes
+      let multiplier = currentTimely === 'Yes' ? 1.0 : 0.07;
+      let displayTotal = Math.round(data.total * multiplier);
+      let displayBreaches = currentTimely === 'Yes' ? data.breaches : displayTotal;
+      let displayRate = currentTimely === 'Yes' ? data.rate : "100.0%";
+      let displayRemediation = Math.round(data.remediation * multiplier);
+
+      document.getElementById('kpi-total').innerText = displayTotal.toLocaleString();
+      document.getElementById('kpi-breaches').innerText = displayBreaches.toLocaleString();
+      document.getElementById('kpi-rate').innerText = displayRate;
+      document.getElementById('kpi-remediation').innerText = displayRemediation.toLocaleString();
+
+      // Render Bar Chart (Top Issues)
+      const issueLabels = data.issues.map(i => i.name.length > 25 ? i.name.substring(0, 25) + '...' : i.name);
+      const issueCounts = data.issues.map(i => Math.round(i.count * multiplier));
+
+      if (issuesChartInstance) issuesChartInstance.destroy();
+      const ctxIssues = document.getElementById('barIssuesChart').getContext('2d');
+      issuesChartInstance = new Chart(ctxIssues, {
+        type: 'bar',
+        data: {
+          labels: issueLabels,
+          datasets: [{
+            data: issueCounts,
+            backgroundColor: '#0070d2',
+            borderRadius: 4
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false }, ticks: { font: { size: 10 } } },
+            y: { ticks: { font: { size: 10 } } }
+          }
+        }
+      });
+
+      // Render Product Column Chart
+      const prodLabels = Object.keys(data.products);
+      const prodCounts = Object.values(data.products).map(v => Math.round(v * multiplier));
+
+      if (productChartInstance) productChartInstance.destroy();
+      const ctxProd = document.getElementById('colProductChart').getContext('2d');
+      productChartInstance = new Chart(ctxProd, {
+        type: 'bar',
+        data: {
+          labels: prodLabels,
+          datasets: [{
+            data: prodCounts,
+            backgroundColor: '#002663',
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { ticks: { font: { size: 10 } } },
+            y: { ticks: { font: { size: 10 } } }
+          }
+        }
+      });
+
+      // Render State Table
+      const tableBody = document.getElementById('state-table-body');
+      tableBody.innerHTML = '';
+      data.states.forEach(s => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td class="py-1.5 font-bold text-slate-800">${s.st}</td>
+          <td class="py-1.5 text-right font-mono">${Math.round(s.exp * multiplier).toLocaleString()}</td>
+          <td class="py-1.5 text-right font-mono text-emerald-600">${Math.round(s.rel * multiplier).toLocaleString()}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+
+      // Render Channel Donut
+      if (channelChartInstance) channelChartInstance.destroy();
+      const ctxChan = document.getElementById('donutChannelChart').getContext('2d');
+      channelChartInstance = new Chart(ctxChan, {
+        type: 'doughnut',
+        data: {
+          labels: ['Web', 'Referral', 'Postal mail', 'Phone', 'Fax', 'Web Referral'],
+          datasets: [{
+            data: data.channels,
+            backgroundColor: ['#0070d2', '#002663', '#64748b', '#f59e0b', '#ef4444', '#8b5cf6'],
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          cutout: '72%'
+        }
+      });
+      document.getElementById('web-pct').innerText = data.channels[0] + '%';
+    }
+
+    // Initialize on load
+    updateDashboard();
+  </script>
+</body>
+</html>

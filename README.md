@@ -4,11 +4,21 @@ Welcome to my professional Data Analytics portfolio repository. This project dem
 
 ---
 
-## 🌟 Portfolio Overview
+## 🌟 Flagship Project: Enterprise Operational Risk Intelligence Dashboard
 
-This portfolio is divided into four main sections:
+### 🏦 [American Express GMNS | Operational Risk & Regulatory Issues Intelligence Dashboard](operational_risk_dashboard/)
+- **[Power BI .pbix File](operational_risk_dashboard/Enterprise_Operational_Risk_Dashboard.pbix)** | **[Interactive Web Version](operational_risk_dashboard/index.html)** | **[Case Study & DAX Documentation](operational_risk_dashboard/README.md)**
+- Built an enterprise operational risk solution analyzing **62,000+ real-world CFPB records** to track SLA compliance (`6.88%` breach rate), issue velocity, and monetary customer remediation.
+- Implemented Pareto root-cause analysis, geographic state resolution matrices, and channel vulnerability tracking.
 
-1. **[Power BI Dashboard File](power_bi_dashboard/power_bi_project.pbix)**: The primary working dashboard file (`.pbix`) containing the active visuals, metrics, and relationships, supported by the **[Service & RLS Guide](power_bi_documentation/Service_And_RLS_Proof.md)**.
+---
+
+## 📂 Portfolio Structure
+
+This portfolio contains:
+
+1. **[Amex GMNS Operational Risk Dashboard](operational_risk_dashboard/)**: End-to-end Risk & Governance solution with active `.pbix`, DAX measures, and web app.
+2. **[Superstore Sales Power BI Dashboard](power_bi_dashboard/power_bi_project.pbix)**: Executive sales and margin tracking dashboard with RLS.
 2. **[SQL Case Studies](sql_portfolio/queries_50.sql)**: A compilation of 50 structured business queries and 5 distinct case studies (Sales, Subscription Churn, HR Turnover, IPL cricket statistics, and Finance) showcasing Joins, CTEs, Window Functions, and Cohort analyses.
 3. **[Python Automation](python_automation/)**: Scripts for automated CSV cleaning using Pandas (`clean_superstore.py`) and scheduled HTML KPI report generation (`generate_report.py`).
 4. **[Interview STAR Stories](interview_preparation/STAR_Interview_Stories.md)**: Tailored responses for technical data interviews utilizing the projects built in this repository.
